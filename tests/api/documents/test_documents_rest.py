@@ -442,6 +442,19 @@ def test_documents_post_put_delete(
     assert res.status_code == 410
 
 
+def test_documents_get_resolve_rero_json(
+    client, document_ref, contribution_person_data, rero_json_header,
+):
+    """Test record get with resolve and mimetype rero+json."""
+    api_url = url_for('invenio_records_rest.doc_item', pid_value='doc2',
+                      resolve='1')
+    res = client.get(api_url, headers=rero_json_header)
+    assert res.status_code == 200
+    metadata = get_json(res).get('metadata', {})
+    pid = metadata['contribution'][0]['agent']['pid']
+    assert pid == contribution_person_data['pid']
+
+
 def test_document_can_request_view(
         client, item_lib_fully,
         loan_pending_martigny, document,
@@ -481,9 +494,7 @@ def test_document_can_request_view(
     assert len(picks) == 3
 
 
-def test_document_boosting(
-    client, ebook_1, ebook_1_data, ebook_4, ebook_4_data
-):
+def test_document_boosting(client, ebook_1, ebook_4):
     """Test document boosting."""
     list_url = url_for(
         'invenio_records_rest.doc_list',
@@ -493,7 +504,7 @@ def test_document_boosting(
     hits = get_json(res)['hits']
     assert hits['total']['value'] == 2
     data = hits['hits'][0]['metadata']
-    assert data['pid'] == ebook_1_data.get('pid')
+    assert data['pid'] == ebook_1.pid
 
     list_url = url_for(
         'invenio_records_rest.doc_list',
@@ -504,7 +515,7 @@ def test_document_boosting(
     hits = get_json(res)['hits']
     assert hits['total']['value'] == 1
     data = hits['hits'][0]['metadata']
-    assert data['pid'] == ebook_1_data.get('pid')
+    assert data['pid'] == ebook_1.pid
 
 
 @mock.patch('requests.get')
@@ -535,7 +546,7 @@ def test_documents_resolve(
         resolve='1'
     ))
     assert res.json['metadata']['contribution'][0]['agent']['sources'] == [
-        'gnd', 'idref'
+        'gnd', 'idref', 'rero'
     ]
     assert res.status_code == 200
 
