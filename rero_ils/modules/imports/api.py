@@ -72,7 +72,6 @@ class Import(object):
             },
             'links': {},
             'permissions': {}
-
         }
         self.data = []
 
@@ -347,8 +346,9 @@ class Import(object):
                                     tag='{http://www.loc.gov/zing/srw/}'
                                         'record'):
                                 yield element
-                        xml_records = _split_stream(BytesIO(response.content))
 
+                        ic(response.content)
+                        xml_records = _split_stream(BytesIO(response.content))
                         for xml_record in xml_records:
                             # convert xml in marc json
                             json_data = create_record(xml_record)

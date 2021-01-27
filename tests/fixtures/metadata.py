@@ -831,6 +831,20 @@ def ebooks_2_xml():
 
 
 @pytest.fixture(scope='module')
+def bnf_xml():
+    """Load bnf xml file."""
+    with open(join(dirname(__file__), '..', 'data', 'bnf.xml')) as fh:
+        return fh.read()
+
+
+@pytest.fixture(scope='module')
+def bnf_error_xml():
+    """Load bnf error xml file."""
+    with open(join(dirname(__file__), '..', 'data', 'bnf_error.xml')) as fh:
+        return fh.read()
+
+
+@pytest.fixture(scope='module')
 def babel_filehandle():
     """Load ebook2 xml file."""
     return open(
