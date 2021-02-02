@@ -422,7 +422,6 @@ class Loan(IlsRecord):
                 'library_name': destination_lib.get('name'),
                 'library_code': destination_lib.get('code')
             }
-
         return data
 
     def is_notified(self, notification_type=None):

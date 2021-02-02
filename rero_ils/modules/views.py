@@ -30,6 +30,7 @@ from flask_login import current_user
 from .permissions import record_permissions
 from ..permissions import librarian_permission
 
+
 api_blueprint = Blueprint(
     'api_blueprint',
     __name__,

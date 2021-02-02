@@ -261,6 +261,7 @@ def create_loan(barcode, transaction_type, loanable_items, verbose=False,
             user_pid, user_location = \
                 get_random_librarian_and_transaction_location(patron)
             circ_policy = CircPolicy.provide_circ_policy(
+                item.organisation_pid,
                 item.library_pid,
                 requested_patron.patron_type_pid,
                 item.item_type_circulation_category_pid
@@ -305,6 +306,7 @@ def create_request(barcode, transaction_type, loanable_items, verbose=False,
                 get_random_librarian_and_transaction_location(patron)
 
             circ_policy = CircPolicy.provide_circ_policy(
+                item.organisation_pid,
                 item.holding_library_pid,
                 rank_1_patron.patron_type_pid,
                 item.holding_circulation_category_pid
@@ -356,6 +358,7 @@ def get_loanable_items(patron_type_pid):
         item = Item.get_record_by_pid(loanable_item.pid)
         if item:
             circ_policy = CircPolicy.provide_circ_policy(
+                item.organisation_pid,
                 item.holding_library_pid,
                 patron_type_pid,
                 item.holding_circulation_category_pid

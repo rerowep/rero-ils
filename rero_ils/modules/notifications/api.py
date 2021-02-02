@@ -387,12 +387,13 @@ def number_of_reminders_sent(loan):
 def calculate_overdue_amount(notification):
     """Return overdue amount for a notification."""
     location_pid = notification.transaction_location_pid
-    library_pid = Location.get_record_by_pid(location_pid).library_pid
+    location = Location.get_record_by_pid(location_pid)
     patron_type_pid = notification.patron.patron_type_pid
     holding_circulation_category_pid = notification\
         .item.holding_circulation_category_pid
     cipo = CircPolicy.provide_circ_policy(
-        library_pid,
+        location.organisation_pid,
+        location.library_pid,
         patron_type_pid,
         holding_circulation_category_pid
     )

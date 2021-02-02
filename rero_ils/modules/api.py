@@ -43,6 +43,7 @@ from kombu.compat import Consumer
 from sqlalchemy.orm.exc import NoResultFound
 
 from .errors import RecordValidationError
+from .utils import cached, memoized
 
 
 class IlsRecordError:
@@ -185,6 +186,7 @@ class IlsRecord(Record):
         return record
 
     @classmethod
+    @memoized(timeout=3)
     def get_record_by_pid(cls, pid, with_deleted=False):
         """Get ils record by pid value."""
         assert cls.provider
@@ -193,10 +195,12 @@ class IlsRecord(Record):
                 cls.provider.pid_type,
                 pid
             )
-            return super().get_record(
+            record = super().get_record(
                 persistent_identifier.object_uuid,
                 with_deleted=with_deleted
             )
+            return record
+
         # TODO: is it better to raise a error or to return None?
         except NoResultFound:
             return None

@@ -338,6 +338,7 @@ def item(item_barcode):
     if patron_pid:
         patron = Patron.get_record_by_pid(patron_pid)
         circ_policy = CircPolicy.provide_circ_policy(
+            item.organisation_pid,
             item.library_pid,
             patron.patron_type_pid,
             item.item_type_circulation_category_pid

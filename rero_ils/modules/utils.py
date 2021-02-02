@@ -30,11 +30,9 @@ from invenio_cache.proxies import current_cache
 from invenio_pidstore.models import PersistentIdentifier
 from invenio_records_rest.utils import obj_or_import_string
 
-from .api import IlsRecordError, IlsRecordsIndexer
-
 
 def cached(timeout=50, key_prefix='default', query_string=False):
-    """Cache traffic."""
+    """Cache functions."""
     def caching(f):
         @wraps(f)
         def wrapper(*args, **kwargs):
@@ -46,6 +44,17 @@ def cached(timeout=50, key_prefix='default', query_string=False):
             return cache_fun(f)(*args, **kwargs)
         return wrapper
     return caching
+
+
+def memoized(timeout=50):
+    """Memoize functions."""
+    def memoize(f):
+        @wraps(f)
+        def wrapper(*args, **kwargs):
+            memoize_fun = current_cache.memoize(timeout=timeout)
+            return memoize_fun(f)(*args, **kwargs)
+        return wrapper
+    return memoize
 
 
 def strtotime(strtime):
@@ -61,6 +70,7 @@ def do_bulk_index(uuids, doc_type='rec', process=False, verbose=False):
     """Bulk index records."""
     if verbose:
         click.echo(' add to index: {count}'.format(count=len(uuids)))
+    from .api import IlsRecordsIndexer
     indexer = IlsRecordsIndexer()
     retry = True
     minutes = 1
@@ -300,6 +310,7 @@ def pid_exists(info, pid_type, pid, raise_on_error=False):
         return True
     else:
         if raise_on_error:
+            from .api import IlsRecordError
             raise IlsRecordError.PidDoesNotExist(info, pid_type, pid)
         return False
 

@@ -199,10 +199,9 @@ class CircPolicy(IlsRecord):
             return None
 
     @classmethod
-    def provide_circ_policy(cls, library_pid, patron_type_pid, item_type_pid):
+    def provide_circ_policy(cls, organisation_pid, library_pid,
+                            patron_type_pid, item_type_pid):
         """Return a circ policy for library/patron/item."""
-        organisation_pid = Library.get_record_by_pid(
-            library_pid).get_organisation().get('pid')
         LPI_policy = CircPolicy.get_circ_policy_by_LPI(
             organisation_pid,
             library_pid,
@@ -265,6 +264,7 @@ class CircPolicy(IlsRecord):
         library_pid = kwargs['library'].pid if kwargs.get('library') \
             else item.library_pid
         cipo = cls.provide_circ_policy(
+            item.organisation_pid,
             library_pid,
             patron.patron_type_pid,
             item.item_type_circulation_category_pid
@@ -294,6 +294,7 @@ class CircPolicy(IlsRecord):
         library_pid = kwargs['library'].pid if kwargs.get('library') \
             else item.library_pid
         cipo = cls.provide_circ_policy(
+            item.organisation_pid,
             library_pid,
             patron.patron_type_pid,
             item.item_type_circulation_category_pid

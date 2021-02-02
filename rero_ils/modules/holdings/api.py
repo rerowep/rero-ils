@@ -397,6 +397,7 @@ class Holding(IlsRecord):
 
         if current_patron and current_patron.is_patron:
             cipo = CircPolicy.provide_circ_policy(
+                self.organisation_pid,
                 self.library_pid,
                 current_patron.patron_type_pid,
                 self.circulation_category_pid

@@ -44,6 +44,7 @@ from ...loans.api import Loan, LoanAction, LoanState, \
     get_last_transaction_loc_for_item, get_request_by_item_pid_by_patron_pid
 from ...locations.api import Location
 from ...patrons.api import Patron
+from ...utils import cached
 from ....filter import format_date_filter
 
 
@@ -1037,10 +1038,15 @@ class ItemCirculation(ItemRecord):
             return True, []
         loan = kwargs['loan']
         patron = Patron.get_record_by_pid(loan.get('patron_pid'))
+        organisation_pid = item.organisation_pid
+        library_pid = item.library_pid
+        patron_type_pid = patron.patron_type_pid
+        item_type_pid = item.item_type_circulation_category_pid
         cipo = CircPolicy.provide_circ_policy(
-            item.library_pid,
-            patron.patron_type_pid,
-            item.item_type_circulation_category_pid
+            organisation_pid=organisation_pid,
+            library_pid=library_pid,
+            patron_type_pid=patron_type_pid,
+            item_type_pid=item_type_pid
         )
         extension_count = loan.get('extension_count', 0)
         if not (cipo.get('number_renewals', 0) > 0 and
@@ -1055,13 +1061,13 @@ class ItemCirculation(ItemRecord):
             return False, ['A pending request exists on this item.']
         return True, []
 
-    def action_filter(self, action, loan):
+    #@cached(timeout=2, key_prefix='action_filter', query_string=True)
+    def action_filter(self, action, organisation_pid, library_pid, loan,
+                      patron_pid, patron_type_pid):
         """Filter actions."""
-        patron_pid = loan.get('patron_pid')
-        patron_type_pid = Patron.get_record_by_pid(
-            patron_pid).patron_type_pid
         circ_policy = CircPolicy.provide_circ_policy(
-            self.library_pid,
+            organisation_pid,
+            library_pid,
             patron_type_pid,
             self.item_type_circulation_category_pid
         )
@@ -1086,6 +1092,7 @@ class ItemCirculation(ItemRecord):
             ):
                 data['action_validated'] = False
                 data['new_action'] = 'checkout'
+
         return data
 
     @property
@@ -1095,14 +1102,28 @@ class ItemCirculation(ItemRecord):
         loan = get_loan_for_item(item_pid_to_object(self.pid))
         actions = set()
         if loan:
+            organisation_pid = self.organisation_pid
+            library_pid = self.library_pid
+            patron_pid = loan.get('patron_pid')
+            patron_type_pid = Patron.get_record_by_pid(
+                patron_pid).patron_type_pid
             for transition in transitions.get(loan['state']):
                 action = transition.get('trigger')
-                data = self.action_filter(action, loan)
+                data = self.action_filter(
+                    action=action,
+                    organisation_pid=organisation_pid,
+                    library_pid=library_pid,
+                    loan=loan,
+                    patron_pid=patron_pid,
+                    patron_type_pid=patron_type_pid
+                )
+
                 if data.get('action_validated'):
                     actions.add(action)
                 if data.get('new_action'):
                     actions.add(data.get('new_action'))
         # default actions
+
         if not loan:
             for transition in transitions.get(LoanState.CREATED):
                 action = transition.get('trigger')

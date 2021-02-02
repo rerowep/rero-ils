@@ -110,6 +110,7 @@ def test_due_soon_loans(client, librarian_martigny_no_email,
 
     from rero_ils.modules.circ_policies.api import CircPolicy
     circ_policy = CircPolicy.provide_circ_policy(
+        item.organisation_pid,
         item.library_pid,
         patron_martigny_no_email.patron_type_pid,
         item.item_type_pid
@@ -480,6 +481,7 @@ def test_timezone_due_date(client, librarian_martigny_no_email,
     patron_pid = patron_martigny_no_email.pid
     from rero_ils.modules.circ_policies.api import CircPolicy
     circ_policy = CircPolicy.provide_circ_policy(
+        item.organisation_pid,
         item.library_pid,
         patron_martigny_no_email.patron_type_pid,
         item.item_type_pid
