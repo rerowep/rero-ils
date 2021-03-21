@@ -405,6 +405,22 @@ calendars = ["convertdate", "hijri-converter", "convertdate"]
 
 [[package]]
 category = "main"
+description = "Dublin Core XML generation from Python dictionaries."
+name = "dcxml"
+optional = false
+python-versions = "*"
+version = "0.1.2"
+
+[package.dependencies]
+lxml = ">=4.1.1"
+
+[package.extras]
+all = ["Sphinx (>=1.5.2)", "check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.2.2)", "pydocstyle (>=1.0.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)"]
+docs = ["Sphinx (>=1.5.2)"]
+tests = ["check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.2.2)", "pydocstyle (>=1.0.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)"]
+
+[[package]]
+category = "main"
 description = "Decorators for Humans"
 name = "decorator"
 optional = false
@@ -2287,14 +2303,6 @@ testing = ["pytest"]
 
 [[package]]
 category = "main"
-description = "Convert any number to word"
-name = "num2word"
-optional = false
-python-versions = "*"
-version = "1.0.1"
-
-[[package]]
-category = "main"
 description = "Modules to convert numbers to words. Easily extensible."
 name = "num2words"
 optional = false
@@ -3602,6 +3610,10 @@ dateparser = [
     {file = "dateparser-1.0.0-py2.py3-none-any.whl", hash = "sha256:17202df32c7a36e773136ff353aa3767e987f8b3e27374c39fd21a30a803d6f8"},
     {file = "dateparser-1.0.0.tar.gz", hash = "sha256:159cc4e01a593706a15cd4e269a0b3345edf3aef8bf9278a57dac8adf5bf1e4a"},
 ]
+dcxml = [
+    {file = "dcxml-0.1.2-py2.py3-none-any.whl", hash = "sha256:36a394f09ebfbb52c2931f259873a7b4ef5468f54b0bc3df66dd0d2fd2633092"},
+    {file = "dcxml-0.1.2.tar.gz", hash = "sha256:484b812517afebf4e119175b5ac2efaee5a9caa2c0b62323e451e49f541e5c17"},
+]
 decorator = [
     {file = "decorator-5.0.7-py3-none-any.whl", hash = "sha256:945d84890bb20cc4a2f4a31fc4311c0c473af65ea318617f13a7257c9a58bc98"},
     {file = "decorator-5.0.7.tar.gz", hash = "sha256:6f201a6c4dac3d187352661f508b9364ec8091217442c9478f1f83c003a0f060"},
@@ -3997,7 +4009,6 @@ lxml = [
     {file = "lxml-4.6.3-cp39-cp39-manylinux2014_x86_64.whl", hash = "sha256:6f12e1427285008fd32a6025e38e977d44d6382cf28e7201ed10d6c1698d2a9a"},
     {file = "lxml-4.6.3-cp39-cp39-win32.whl", hash = "sha256:33bb934a044cf32157c12bfcfbb6649807da20aa92c062ef51903415c704704f"},
     {file = "lxml-4.6.3-cp39-cp39-win_amd64.whl", hash = "sha256:542d454665a3e277f76954418124d67516c5f88e51a900365ed54a9806122b83"},
-    {file = "lxml-4.6.3.tar.gz", hash = "sha256:39b78571b3b30645ac77b95f7c69d1bffc4cf8c3b157c435a34da72e78c82468"},
 ]
 mako = [
     {file = "Mako-1.1.4-py2.py3-none-any.whl", hash = "sha256:aea166356da44b9b830c8023cd9b557fa856bd8b4035d6de771ca027dfc5cc6e"},
@@ -4092,10 +4103,6 @@ msgpack = [
 ]
 node-semver = [
     {file = "node-semver-0.1.1.tar.gz", hash = "sha256:e29ee4e51efb6d82c55aef5d569b888842e62e6404ce95df18d80c421f8e7dac"},
-]
-num2word = [
-    {file = "num2word-1.0.1-py3-none-any.whl", hash = "sha256:8ff4c5add7039766827d35138c79a1f87e6a2f82938f478ddaf476e18785e0fa"},
-    {file = "num2word-1.0.1.tar.gz", hash = "sha256:251988feabd38a287583a65a687eaac9aae1ffe56a761f00bf08db6892692b93"},
 ]
 num2words = [
     {file = "num2words-0.5.10-py3-none-any.whl", hash = "sha256:0b6e5f53f11d3005787e206d9c03382f459ef048a43c544e3db3b1e05a961548"},
