@@ -41,7 +41,7 @@ class Import(object):
     url_api = None
     search = {}
     marc_to_json = None
-    status_code = 444
+    status_code = 404
     max = 50
 
     def __init__(self):

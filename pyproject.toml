@@ -79,6 +79,8 @@ cryptography = ">3.3.1"
 freezegun = "^1.1.0"
 lazyreader = ">1.0.0"
 jinja2 = ">2.11.2"
+invenio-records-resources = "^0.13.2"
+pycql = "^0.0.12"
 
 [tool.poetry.dev-dependencies]
 ## Python packages development dependencies (order matters)

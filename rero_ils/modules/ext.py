@@ -57,11 +57,13 @@ from ..filter import empty_data, format_date_filter, jsondumps, lib_url, \
     node_assets, text_to_id, to_pretty_json
 
 
-class REROILSAPP(object):
-    """rero-ils extension."""
+class REROILSUI(object):
+    """rero-ils ui extension."""
 
     def __init__(self, app=None):
         """RERO ILS App module."""
+        self.resources = {}
+
         if app:
             self.init_app(app)
             # force to load ils template before others
@@ -90,11 +92,84 @@ class REROILSAPP(object):
         Wiki(app)
         self.init_config(app)
         app.extensions['rero-ils'] = self
+        self.create_resources()
+
+    def init_config(self, app):
+        """Initialize configuration."""
+        # Use theme's base template if theme is installed
+        for k in dir(app.config):
+            if k.startswith('RERO_ILS_APP_'):
+                app.config.setdefault(k, getattr(app.config, k))
+
+    def register_signals(self, app):
+        """Register signals."""
+        # TODO: use before_record_index.dynamic_connect() if it works
+        # example:
+        # before_record_index.dynamic_connect(
+        #    enrich_patron_data, sender=app, index='patrons-patron-v0.0.1')
+        before_record_index.connect(enrich_collection_data, sender=app)
+        before_record_index.connect(enrich_loan_data, sender=app)
+        before_record_index.connect(enrich_document_data, sender=app)
+        before_record_index.connect(enrich_contributions_data, sender=app)
+        before_record_index.connect(enrich_item_data, sender=app)
+        before_record_index.connect(enrich_patron_data, sender=app)
+        before_record_index.connect(enrich_location_data, sender=app)
+        before_record_index.connect(enrich_holding_data, sender=app)
+        before_record_index.connect(enrich_notification_data, sender=app)
+        before_record_index.connect(enrich_patron_transaction_event_data,
+                                    sender=app)
+        before_record_index.connect(enrich_patron_transaction_data, sender=app)
+        before_record_index.connect(enrich_ill_request_data, sender=app)
+
+        after_record_insert.connect(create_subscription_patron_transaction)
+        after_record_update.connect(create_subscription_patron_transaction)
+
+        after_record_insert.connect(operation_log_record_create)
+        after_record_update.connect(operation_log_record_update)
+
+        loan_state_changed.connect(listener_loan_state_changed, weak=False)
+
+        oaiharvest_finished.connect(publish_harvested_records, weak=False)
+
+        apiharvest_part.connect(publish_api_harvested_records, weak=False)
+
+        # invenio-userprofiles signal
+        after_profile_update.connect(update_from_profile)
+
+    def create_resources(self):
+        """Create resources."""
+        # imports should be here to avoid test errors
+        from rero_ils.resources.sru.resource import Resource
+        from rero_ils.resources.sru.service import Service
+
+        # /api/SRU
+        sru = Resource(service=Service())
+        self.resources['sru'] = sru
+
+
+class REROILSAPI(REROILSUI):
+    """rero-ils api extension."""
+
+    def __init__(self, app=None):
+        """RERO ILS App module."""
+        self.resources = {}
+        if app:
+            self.create_resources()
+            self.init_app(app)
+            self.register_signals(app)
+
+    def init_app(self, app):
+        """Flask application initialization."""
+        self.init_config(app)
+        app.extensions['rero-ils'] = self
         self.register_import_api_blueprint(app)
         self.register_users_api_blueprint(app)
-        # import logging
-        # logging.getLogger('sqlalchemy.engine').setLevel(logging.INFO)
+        self.register_blueprints(app)
 
+    def register_blueprints(self, app):
+        """Register the blueprints."""
+        app.register_blueprint(
+            self.resources['sru'].as_blueprint('sru'))
 
     def register_import_api_blueprint(self, app):
         """Imports bluprint initialization."""
@@ -138,15 +213,11 @@ class REROILSAPP(object):
         )
         api_blueprint.add_url_rule(
             '/users/<id>',
-            view_func=UsersResource.as_view(
-            'users_item'
-        )
+            view_func=UsersResource.as_view('users_item')
         )
         api_blueprint.add_url_rule(
             '/users/',
-            view_func=UsersCreateResource.as_view(
-            'users_list'
-        )
+            view_func=UsersCreateResource.as_view('users_list')
         )
 
         @api_blueprint.errorhandler(ValidationError)
@@ -155,45 +226,3 @@ class REROILSAPP(object):
             return JSONSchemaValidationError(error=error).get_response()
 
         app.register_blueprint(api_blueprint)
-
-    def init_config(self, app):
-        """Initialize configuration."""
-        # Use theme's base template if theme is installed
-        for k in dir(app.config):
-            if k.startswith('RERO_ILS_APP_'):
-                app.config.setdefault(k, getattr(app.config, k))
-
-    def register_signals(self, app):
-        """Register signals."""
-        # TODO: use before_record_index.dynamic_connect() if it works
-        # example:
-        # before_record_index.dynamic_connect(
-        #    enrich_patron_data, sender=app, index='patrons-patron-v0.0.1')
-        before_record_index.connect(enrich_collection_data, sender=app)
-        before_record_index.connect(enrich_loan_data, sender=app)
-        before_record_index.connect(enrich_document_data, sender=app)
-        before_record_index.connect(enrich_contributions_data, sender=app)
-        before_record_index.connect(enrich_item_data, sender=app)
-        before_record_index.connect(enrich_patron_data, sender=app)
-        before_record_index.connect(enrich_location_data, sender=app)
-        before_record_index.connect(enrich_holding_data, sender=app)
-        before_record_index.connect(enrich_notification_data, sender=app)
-        before_record_index.connect(enrich_patron_transaction_event_data,
-                                    sender=app)
-        before_record_index.connect(enrich_patron_transaction_data, sender=app)
-        before_record_index.connect(enrich_ill_request_data, sender=app)
-
-        after_record_insert.connect(create_subscription_patron_transaction)
-        after_record_update.connect(create_subscription_patron_transaction)
-
-        after_record_insert.connect(operation_log_record_create)
-        after_record_update.connect(operation_log_record_update)
-
-        loan_state_changed.connect(listener_loan_state_changed, weak=False)
-
-        oaiharvest_finished.connect(publish_harvested_records, weak=False)
-
-        apiharvest_part.connect(publish_api_harvested_records, weak=False)
-
-        # invenio-userprofiles signal
-        after_profile_update.connect(update_from_profile)

@@ -15,8 +15,4 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-"""RERO ILS data module."""
-
-from .ext import REROILSAPI, REROILSUI
-
-__all__ = ('REROILSUI', 'REROILSAPI')
+"""SRU resources."""

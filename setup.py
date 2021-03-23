@@ -40,7 +40,7 @@ class EggInfoWithCompile(egg_info):
 
 readme = open('README.rst').read()
 
-INVENIO_VERSION = "3.1.1"
+INVENIO_VERSION = "3.4.0"
 
 packages = find_packages()
 
@@ -77,10 +77,10 @@ setup(
         ],
         'invenio_base.apps': [
             # 'flask_debugtoolbar = flask_debugtoolbar:DebugToolbarExtension',
-            'rero-ils = rero_ils.modules.ext:REROILSAPP'
+            'rero-ils = rero_ils.modules.ext:REROILSUI'
         ],
         'invenio_base.api_apps': [
-            'rero-ils = rero_ils.modules.ext:REROILSAPP',
+            'rero-ils = rero_ils.modules.ext:REROILSAPI',
             'invenio_i18n = invenio_i18n:InvenioI18N'
         ],
         'invenio_base.blueprints': [
