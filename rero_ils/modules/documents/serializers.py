@@ -385,7 +385,8 @@ class DocumentMARCXMLSRUSerializer(DocumentMARCXMLSerializer):
             start_record = sru.get('start_record', 0)
             maximum_records = sru.get('maximum_records', 0)
             query = sru.get('query')
-            next_record = start_record + maximum_records + 1
+            query_es = sru.get('query_es')
+            next_record = start_record + maximum_records
             root = element.searchRetrieveResponse()
             root.append(element.version('1.1'))
             root.append(element.numberOfRecords(str(number_of_records)))
@@ -398,6 +399,8 @@ class DocumentMARCXMLSRUSerializer(DocumentMARCXMLSerializer):
             echoed_search_rr = element.echoedSearchRetrieveRequest()
             if query:
                 echoed_search_rr.append(element.query(query))
+            if query_es:
+                echoed_search_rr.append(element.query_es(query_es))
             if start_record:
                 echoed_search_rr.append(
                     element.startRecord(str(start_record)))
