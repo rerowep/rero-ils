@@ -59,6 +59,8 @@ describe('Login and logout', function() {
   });
 
   it('Logout', function() {
+    // Hide Flask Debug Toolbar
+    cy.get('#flHideToolBarButton').click()
     // Click on username
     cy.get('#my-account-menu').click()
     // Wait for the menu to open

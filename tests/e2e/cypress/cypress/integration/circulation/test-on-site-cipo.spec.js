@@ -57,6 +57,7 @@ describe(`Test 'less than one day' checkout`, function() {
   before('Login and prepare app for tests', function() {
     // Login as librarian (Leonard)
     cy.adminLogin(this.users.librarians.leonard.email, this.common.uniquePwd);
+    cy.get('#flHideToolBarButton').click();
     // Create patron type
     cy.apiCreatePatronType(this.patronTypes.visitors, this.nameSuffix);
     cy.get('@getPatronTypePid').then((pid) => {

@@ -38,6 +38,7 @@ describe('Collections', function() {
   before('Login as a professional', function() {
     // Login as librarian (Leonard)
     cy.adminLogin(this.users.librarians.spock.email, this.common.uniquePwd);
+    cy.get('#flHideToolBarButton').click();
   });
 
   beforeEach(() => {

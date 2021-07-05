@@ -36,6 +36,7 @@ describe('Create a document with provision activity', function() {
     this.spock = this.users.librarians.spock;
     // Login as librarian
     cy.adminLogin(this.spock.email, this.common.uniquePwd);
+    cy.get('#flHideToolBarButton').click();
     cy.apiCreateDocument(this.documents.book, documentTitleSuffix);
     cy.get('@getDocumentPid').then((pid) => {
       documentPid = pid;

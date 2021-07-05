@@ -35,6 +35,7 @@ describe('Templates: Create and use template for a document', function() {
 
   before('Login as librarian', function() {
     cy.login(this.users.librarians.spock.email, this.common.uniquePwd)
+    cy.get('#flHideToolBarButton').click();
     cy.intercept('GET', '**/professional/records/document**)').as('documentEditor');
     cy.intercept('POST', '/api/templates/').as('createTemplate');
     cy.intercept('GET', '/schemas/documents').as('getDocumentSchemaform');
@@ -56,6 +57,8 @@ describe('Templates: Create and use template for a document', function() {
     // cy.get('#formly_30_enum__0').select(template.document.type[0].main_type);
     // cy.get('#type-0-0-1-2-subtype').select(template.document.type[0].subtype);
     cy.get('#title-0-mainTitle-0-value').type(template.document.title.mainTitle, {force: true});
+    cy.get('#provisionActivity-0-startDate').type(template.document.provisionActivity[0].statement[0].label[0].value, {force: true});
+    cy.get('#field-language-0-value').click();
     // Save as a template
     cy.get('#editor-save-button-split').click();
     cy.get('#editor-save-button-dropdown-split')
@@ -74,7 +77,7 @@ describe('Templates: Create and use template for a document', function() {
     // Load template
     cy.get('#editor-load-template-button').click();
     cy.get('.modal-content #template').select(this.templateName);
-    cy.get('.modal-content button:submit').click(),
+    cy.get('.modal-footer button:submit').click(),
     // Assert that the template was correctly loaded
     // TODO: find how to manage oneOf with Cypress
     // cy.get('#formly_351_enum__0').should('eq', template.document.type[0].main_type);

@@ -49,6 +49,7 @@ describe('Example: librarian request', function() {
     console.log('before');
     // Login as librarian
     cy.adminLogin(this.users.librarians.spock.email, this.common.uniquePwd);
+    cy.get('#flHideToolBarButton').click();
     // Create a document
     cy.apiCreateDocument(this.documents.book, this.documentTitleSuffix);
     cy.get('@getDocumentPid').then((pid) => {

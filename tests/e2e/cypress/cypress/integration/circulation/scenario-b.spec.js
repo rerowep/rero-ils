@@ -53,6 +53,7 @@ describe('Circulation scenario B: standard loan with transit', function() {
   before('Login as a professional and create a document and an item', function() {
     // Login as librarian (Leonard)
     cy.adminLogin(this.users.librarians.leonard.email, this.common.uniquePwd);
+    cy.get('#flHideToolBarButton').click();
     // Create a document
     cy.apiCreateDocument(this.documents.book, documentTitleSuffix);
     cy.get('@getDocumentPid').then((pid) => {

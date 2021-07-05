@@ -44,6 +44,7 @@ describe('Create and edit a circulation policy', function() {
   before('Login and prepare app for tests', function() {
     // Login as librarian (Leonard)
     cy.adminLogin(this.users.librarians.leonard.email, this.common.uniquePwd);
+    cy.get('#flHideToolBarButton').click();
   });
 
   beforeEach('Add description if needed', function() {

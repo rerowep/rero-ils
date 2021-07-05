@@ -34,6 +34,7 @@ describe('Create a document', function() {
     this.spock = this.users.librarians.spock;
     // Login as librarian
     cy.adminLogin(this.spock.email, this.common.uniquePwd);
+    cy.get('#flHideToolBarButton').click();
   });
 
   after('Clean data: remove document', function() {

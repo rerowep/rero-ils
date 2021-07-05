@@ -9,7 +9,25 @@
       "type_value": "6: sound",
       "title": {
         "mainTitle": "Template title"
-      }
+      },
+      "provisionActivity": [
+        {
+          "statement": [
+            {
+              "label": [
+                {
+                  "value": "2021"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "language": [
+        {
+          "value": "fre"
+        }
+      ]
     }
   }
 }
