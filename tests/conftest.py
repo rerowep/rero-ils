@@ -197,6 +197,7 @@ def app_config(app_config):
     app_config["WTF_CSRF_ENABLED"] = False
     # enable operation logs validation for the tests
     app_config["RERO_ILS_ENABLE_OPERATION_LOG_VALIDATION"] = True
+    app_config["RERO_ILS_MEF_REF_BASE_URL"] = "mef.rero.ch"
     app_config["RERO_ILS_MEF_CONFIG"] = {
         "agents": {
             "base_url": "https://mef.rero.ch/api/agents",
