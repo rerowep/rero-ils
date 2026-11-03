@@ -129,7 +129,7 @@ def get(migration, id, conversion_status, format, out_file):
             ConversionClass = migration.conversion_class
             return ConversionClass.markdown(data.raw)
         if format == "conversion-status" and hasattr(data.conversion, "status"):
-            return (data.meta.id, data.conversion.status)
+            return f"{data.meta.id}\t{data.conversion.status}"
         return None
 
     if out_file:
@@ -146,17 +146,12 @@ def get(migration, id, conversion_status, format, out_file):
             print(msg)
             if out_file:
                 out_file.write(f"{msg}\n")
-            if hasattr(data.conversion.logs, "info"):
-                msg = "\n".join(data.conversion.logs.info)
-                click.secho(msg, fg="green")
-            if hasattr(data.conversion.logs, "warnings"):
-                msg = "\n".join(data.conversion.logs.warnings)
-                click.secho(msg, fg="yellow")
-            if hasattr(data.conversion.logs, "error"):
-                msg = "\n".join(data.conversion.logs.error)
-                click.secho(msg, fg="red")
-            if out_file:
-                out_file.write(f"{msg}\n")
+            for level, color in (("info", "green"), ("warning", "yellow"), ("error", "red")):
+                if hasattr(data.conversion.logs, level):
+                    msg = "\n".join(getattr(data.conversion.logs, level))
+                    click.secho(msg, fg=color)
+                    if out_file:
+                        out_file.write(f"{msg}\n")
         else:
             if format == "json":
                 print(json.dumps(msg, indent=2))
